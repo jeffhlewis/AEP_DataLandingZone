@@ -18,7 +18,6 @@
 # -----=====-----=====-----=====-----=====-----=====
 $containerName = "<DLZ CONTAINER NAME>"
 $accountName   = "<DLZ ACCOUNT NAME>"
-$sasURI        = "<DLZ SAS URI>"
 $sasToken      = "<DLZ SAS TOKEN>"
 
 # -----=====-----=====-----=====-----=====-----=====

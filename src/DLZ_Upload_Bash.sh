@@ -1,3 +1,4 @@
+#!/bin/bash
 # -----=====-----=====-----=====-----=====-----=====-----=====
 # Uploads a single file from a local file store to an Adobe 
 # Experience Platform Data Landing Zone
