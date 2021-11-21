@@ -157,6 +157,37 @@ curl -v -X PUT \
 
 ---
 
+## Upload a File Using AzCopy
+
+* [DLZ_Upload_AzCopy.bat](./src/DLZ_Upload_AzCopy.bat)
+
+This example uses Microsoft's [AzCopy utility](https://docs.microsoft.com/en-us/azure/storage/common/storage-ref-azcopy?toc=/azure/storage/blobs/toc.json) to upload a file to Data Landing Zone. While we're only using the [copy](https://docs.microsoft.com/en-us/azure/storage/common/storage-ref-azcopy-copy) command in this example, there are a number of other commands and options that the utility supports.
+
+```cmd
+@echo off
+
+rem -----=====-----=====-----=====-----=====-----=====-----=====
+rem Uploads a single file from a local file store to an 
+rem Adobe Experience Platform Data Landing Zone using
+rem the Azure AzCopy utility. Assumes you have PATH vars
+rem set for AzCopy (otherwise path to azcopy.exe is 
+rem required).
+rem 
+rem Note that certain characters in the sas URI (i.e., "%")
+rem must be properly escaped.
+rem 
+rem Author:     Jeff Lewis (jeflewis@adobe.com)
+rem Created On: 2021-11-21
+rem -----=====-----=====-----=====-----=====-----=====-----=====
+
+set sasUri=<FULL SAS URI, PROPERLY ESCAPED>
+set srcFilePath=<PATH TO LOCAL FILE(S); WORKS WITH WILDCARD PATTERNS>
+
+azcopy copy "%srcFilePath%" "%sasUri%" --overwrite=true --recursive=true
+```
+
+---
+
 ## Use Data Landing Zone in AEP as a Data Source
 
 Once you have data loading into your Data Landing Zone, you can use it as a data source connector within AEP as if it were any other cloud-based storage data source.
