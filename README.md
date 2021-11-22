@@ -17,7 +17,7 @@ This method of file transmission can be particularly useful in situations where 
 
 ---
 
-## Locating your Data Landing Zone Credentials
+## Locating Your Data Landing Zone Credentials
 
 To locate your Data Landing Zone credentials, browse to the **Sources** menu in Adobe Experience Platform. Under the **Cloud Storage** subheading, look for **Data Landing Zone**. Click the ellipses next to *Set up* and click **View credentials**.
 
@@ -73,7 +73,7 @@ To establish a connection between Azure Storage Explorer and Data Landing Zone, 
 
 ---
 
-## Upload a file using PowerShell
+## Upload a File Using PowerShell
 
 * [DLZ_Upload_PowerShell.ps1](./src/DLZ_Upload_PowerShell.ps1)
 
@@ -117,7 +117,7 @@ $response      = Set-AzStorageBlobContent -File $srcFilePath -Container $contain
 
 ---
 
-## Upload a file using Bash
+## Upload a File Using Bash
 
 * [DLZ_Upload_Bash.sh](./src/DLZ_Upload_Bash.sh)
 
