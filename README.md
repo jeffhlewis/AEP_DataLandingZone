@@ -17,7 +17,7 @@ This method of file transmission can be particularly useful in situations where 
 
 ---
 
-## Locating your Data Landing Zone Credentials
+## Locating Your Data Landing Zone Credentials
 
 To locate your Data Landing Zone credentials, browse to the **Sources** menu in Adobe Experience Platform. Under the **Cloud Storage** subheading, look for **Data Landing Zone**. Click the ellipses next to *Set up* and click **View credentials**.
 
@@ -73,7 +73,30 @@ To establish a connection between Azure Storage Explorer and Data Landing Zone, 
 
 ---
 
-## Upload a file using PowerShell
+## Supported Blob Types
+
+The file transmission options detailed below generally default to the **block blob** blob type unless you specify a different option in your code.
+
+Data Landing Zone supports the following blob types:
+* **Block blobs** - optimized for uploading large amounts of data efficiently
+  * This is the default option and generally what you should use with Data Landing Zone use cases
+* **Append blobs** - optimized for appending data to the end of a file (i.e. a log or ledger scenario)
+
+Note that **Page blobs** are not currently supported, due to restrictions with hierarchical namespace-enabled storage accounts ([more info](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-known-issues#blob-storage-apis)). Attempting to upload a page blob to Data Landing Zone will result in a similar error to the one below:
+
+```
+Specified feature is not yet supported for hierarchical namespace accounts. HTTP Status Code: 409 - HTTP Error Message: Specified feature is not yet supported for hierarchical namespace accounts. 
+
+...
+
+FeatureName: Page Blobs
+```
+More information about blob types can be found [here](https://docs.microsoft.com/en-us/rest/api/storageservices/understanding-block-blobs--append-blobs--and-page-blobs).
+
+
+---
+
+## Upload a File Using PowerShell
 
 * [DLZ_Upload_PowerShell.ps1](./src/DLZ_Upload_PowerShell.ps1)
 
@@ -117,7 +140,7 @@ $response      = Set-AzStorageBlobContent -File $srcFilePath -Container $contain
 
 ---
 
-## Upload a file using Bash
+## Upload a File Using Bash
 
 * [DLZ_Upload_Bash.sh](./src/DLZ_Upload_Bash.sh)
 
@@ -244,6 +267,7 @@ Once you have data loading into your Data Landing Zone, you can use it as a data
 
 * [Adobe Experience League > Data Landing Zone](https://experienceleague.adobe.com/docs/experience-platform/sources/connectors/cloud-storage/data-landing-zone.html?lang=en)
 * [Azure Storage Explorer > Download](https://azure.microsoft.com/en-us/features/storage-explorer/)
+* [Microsoft Docs > Storage Services > Understanding block blobs, append blobs, and page blobs](https://docs.microsoft.com/en-us/rest/api/storageservices/understanding-block-blobs--append-blobs--and-page-blobs)
 * [Microsoft Docs > Delegate Access with a Shared Access Signature](https://docs.microsoft.com/en-us/rest/api/storageservices/delegate-access-with-shared-access-signature)
 * [Microsoft Docs > Quickstart: Upload, download, and list blobs with PowerShell](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-powershell)
 * [Microsoft Docs > Quickstart: Manage blobs with Python v12 SDK](https://docs.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-python)
