@@ -96,6 +96,71 @@ More information about blob types can be found [here](https://docs.microsoft.com
 
 ---
 
+## Upload a File Using Bash
+
+* [DLZ_Upload_Bash.sh](./src/DLZ_Upload_Bash.sh)
+
+This example uses Bash and [cURL](https://curl.se/) to upload a file to Data Landing Zone with the Azure Blob Storage REST API.
+
+```Bash
+#!/bin/bash
+# -----=====-----=====-----=====-----=====-----=====-----=====
+# Uploads a single file from a local file store to an Adobe
+# Experience Platform Data Landing Zone
+#
+# Author:     Jeff Lewis (jeflewis@adobe.com)
+# Created On: 2021-11-12
+# -----=====-----=====-----=====-----=====-----=====-----=====
+
+# Set Azure Blob-related settings
+DATE_NOW=$(date -Ru | sed 's/\+0000/GMT/')
+AZ_VERSION="2018-03-28"
+AZ_BLOB_URL="<URL TO BLOB ACCOUNT>"
+AZ_BLOB_CONTAINER="<BLOB CONTAINER NAME>"
+AZ_BLOB_TARGET="${AZ_BLOB_URL}/${AZ_BLOB_CONTAINER}"
+AZ_SAS_TOKEN="<SAS TOKEN, STARTING WITH ? AND ENDING WITH %3D>"
+
+# Path to the file we wish to upload
+FILE_PATH="</PATH/TO/FILE>"
+FILE_NAME=$(basename "$FILE_PATH")
+
+# Execute HTTP PUT to upload file (remove '-v' flag to suppress verbose output)
+curl -v -X PUT \
+   -H "Content-Type: application/octet-stream" \
+   -H "x-ms-date: ${DATE_NOW}" \
+   -H "x-ms-version: ${AZ_VERSION}" \
+   -H "x-ms-blob-type: BlockBlob" \
+   --data-binary "@${FILE_PATH}" "${AZ_BLOB_TARGET}/${FILE_NAME}${AZ_SAS_TOKEN}"
+```
+
+---
+
+## Copy a File to Data Landing Zone from an Existing Azure Storage Account Using Bash
+
+* [DLZ_Copy_Bash.sh](./src/DLZ_Copy_Bash.py)
+
+This example uses Bash and cURL to **copy** a file located in an existing Azure Storage blob container to the Data Landing Zone with the Azure Blob Storage REST API.
+
+In this example, both the source blob container and the Data Landing Zone blob container are using SAS URIs.
+
+```
+code tbd
+```
+
+Note that this method has a maximum allowable file size of **5000 MB**. If you exceed this limit, you will get the following error message:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<Error>
+    <Code>CannotVerifyCopySource</Code>
+    <Message>The source request body is too large and exceeds the maximum permissible limit (5000MB).
+RequestId:[Request GUID]
+Time:[ISO-8601 timestamp]</Message>
+</Error>
+```
+
+---
+
 ## Upload a File Using PowerShell
 
 * [DLZ_Upload_PowerShell.ps1](./src/DLZ_Upload_PowerShell.ps1)
@@ -136,46 +201,6 @@ $srcFileName   = Split-path $srcFilePath -leaf
 # -----=====-----=====-----=====-----=====-----=====
 $clientContext = New-AzStorageContext -SasToken $sasToken -StorageAccountName $accountName
 $response      = Set-AzStorageBlobContent -File $srcFilePath -Container $containerName -Blob $srcFileName -Force -Context $clientContext
-```
-
----
-
-## Upload a File Using Bash
-
-* [DLZ_Upload_Bash.sh](./src/DLZ_Upload_Bash.sh)
-
-This example uses Bash and [cURL](https://curl.se/) to upload a file to Data Landing Zone with the Azure Blob Storage REST API.
-
-```Bash
-#!/bin/bash
-# -----=====-----=====-----=====-----=====-----=====-----=====
-# Uploads a single file from a local file store to an Adobe 
-# Experience Platform Data Landing Zone
-#
-# Author:     Jeff Lewis (jeflewis@adobe.com)
-# Created On: 2021-11-12
-# -----=====-----=====-----=====-----=====-----=====-----=====
-
-# Set Azure Blob-related settings
-DATE_NOW=$(date -Ru | sed 's/\+0000/GMT/')
-AZ_VERSION="2018-03-28"
-AZ_BLOB_URL="<URL TO BLOB ACCOUNT>"
-AZ_BLOB_CONTAINER="<BLOB CONTAINER NAME>"
-AZ_BLOB_TARGET="${AZ_BLOB_URL}/${AZ_BLOB_CONTAINER}"
-AZ_SAS_TOKEN="<SAS TOKEN, STARTING WITH ? AND ENDING WITH %3D>"
-
-# Path to the file we wish to upload
-FILE_PATH="</PATH/TO/FILE>"
-FILE_NAME=$(basename "$FILE_PATH")
-
-# Execute HTTP PUT to upload file (remove '-v' flag to suppress verbose output)
-curl -v -X PUT \
-   -H "Content-Type: application/octet-stream" \
-   -H "x-ms-date: ${DATE_NOW}" \
-   -H "x-ms-version: ${AZ_VERSION}" \
-   -H "x-ms-blob-type: BlockBlob" \
-   --data-binary "@${FILE_PATH}" "${AZ_BLOB_TARGET}/${FILE_NAME}${AZ_SAS_TOKEN}"
-
 ```
 
 ---
