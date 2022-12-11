@@ -102,7 +102,7 @@ More information about blob types can be found [here](https://docs.microsoft.com
 
 This example uses Bash and [cURL](https://curl.se/) to upload a file to Data Landing Zone with the Azure Blob Storage REST API.
 
-https://github.com/jeffhlewis/AEP_DataLandingZone/blob/58411e4644689b0bf86e0ef5a409e8d23be8fd05/src/DLZ_Upload_Bash.sh
+https://github.com/jeffhlewis/AEP_DataLandingZone/blob/aabcf77c49a6a370f20b0b479fb9840c82f490fd/src/DLZ_Upload_Bash.sh
 
 ```Bash
 #!/bin/bash
