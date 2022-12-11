@@ -29,7 +29,7 @@ $srcSasToken      = "<SRC SAS TOKEN>"
 $fileName         = "<NAME OF FILE TO TRANSFER, WITH EXTENSION>"
 
 # -----=====-----=====-----=====-----=====-----=====
-# Generate Storage Context and Upload File
+# Generate Storage Context and Copy File
 # -----=====-----=====-----=====-----=====-----=====
 $srcContext  = New-AzStorageContext -SasToken $srcSasToken  -StorageAccountName $srcAccountName
 $destContext = New-AzStorageContext -SasToken $destSasToken -StorageAccountName $destAccountName

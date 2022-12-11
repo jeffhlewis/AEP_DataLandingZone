@@ -18,8 +18,7 @@ FILE_NAME="<NAME OF FILE TO TRANSFER, WITH EXTENSION>"
 AZ_BLOB_SRC_SAS_URL="https://<SOURCE ACCOUNT NAME>.blob.core.windows.net/<SOURCE CONTAINER NAME>/${FILE_NAME}?<SOURCE SAS TOKEN>"
 AZ_BLOB_DEST_SAS_URL="https://<DEST ACCOUNT NAME>.blob.core.windows.net/<DEST CONTAINER NAME>/${FILE_NAME}?<DEST SAS TOKEN>"
 
-
-# Execute HTTP PUT to upload file (remove '-v' flag to suppress verbose output)
+# Execute HTTP PUT to copy file (remove '-v' flag to suppress verbose output)
 curl -v -X PUT ${AZ_BLOB_DEST_SAS_URL} \
 	-H "Content-Type: application/octet-stream" \
 	-H "Content-Length: 0" \
