@@ -102,6 +102,8 @@ More information about blob types can be found [here](https://docs.microsoft.com
 
 This example uses Bash and [cURL](https://curl.se/) to upload a file to Data Landing Zone with the Azure Blob Storage REST API.
 
+https://github.com/jeffhlewis/AEP_DataLandingZone/blob/58411e4644689b0bf86e0ef5a409e8d23be8fd05/src/DLZ_Upload_Bash.sh
+
 ```Bash
 #!/bin/bash
 # -----=====-----=====-----=====-----=====-----=====-----=====
@@ -114,7 +116,7 @@ This example uses Bash and [cURL](https://curl.se/) to upload a file to Data Lan
 
 # Set Azure Blob-related settings
 DATE_NOW=$(date -Ru | sed 's/\+0000/GMT/')
-AZ_VERSION="2018-03-28"
+AZ_VERSION="2021-08-06"
 AZ_BLOB_URL="<URL TO BLOB ACCOUNT>"
 AZ_BLOB_CONTAINER="<BLOB CONTAINER NAME>"
 AZ_BLOB_TARGET="${AZ_BLOB_URL}/${AZ_BLOB_CONTAINER}"
@@ -137,14 +139,42 @@ curl -v -X PUT \
 
 ## Copy a File to Data Landing Zone from an Existing Azure Storage Account Using Bash
 
-* [DLZ_Copy_Bash.sh](./src/DLZ_Copy_Bash.py)
+* [DLZ_Copy_Bash.sh](./src/DLZ_Copy_Bash.sh)
 
 This example uses Bash and cURL to **copy** a file located in an existing Azure Storage blob container to the Data Landing Zone with the Azure Blob Storage REST API.
 
 In this example, both the source blob container and the Data Landing Zone blob container are using SAS URIs.
 
-```
-code tbd
+```Bash
+#!/bin/bash
+# -----=====-----=====-----=====-----=====-----=====-----=====
+# Copies a single file from an existing Azure Blob storage
+# location to an Adobe Experience Platform Data Landing Zone
+# using the "Put Blob from URL" operation.
+#
+# Note that the Content-Length header value of zero is
+# required for this type of Blob Service REST API operation
+#
+# Author:     Jeff Lewis (jeflewis@adobe.com)
+# Created On: 2022-12-10
+# -----=====-----=====-----=====-----=====-----=====-----=====
+
+# Set Azure Blob-related settings
+DATE_NOW=$(date -Ru | sed 's/\+0000/GMT/')
+AZ_VERSION="2021-08-06"
+FILE_NAME="<NAME OF FILE TO TRANSFER, WITH EXTENSION>"
+AZ_BLOB_SRC_SAS_URL="https://<SOURCE ACCOUNT NAME>.blob.core.windows.net/<SOURCE CONTAINER NAME>/${FILE_NAME}?<SOURCE SAS TOKEN>"
+AZ_BLOB_DEST_SAS_URL="https://<DEST ACCOUNT NAME>.blob.core.windows.net/<DEST CONTAINER NAME>/${FILE_NAME}?<DEST SAS TOKEN>"
+
+
+# Execute HTTP PUT to upload file (remove '-v' flag to suppress verbose output)
+curl -v -X PUT ${AZ_BLOB_DEST_SAS_URL} \
+	-H "Content-Type: application/octet-stream" \
+	-H "Content-Length: 0" \
+	-H "x-ms-date: ${DATE_NOW}" \
+	-H "x-ms-version: ${AZ_VERSION}" \
+	-H "x-ms-blob-type: BlockBlob" \
+	-H "x-ms-copy-source: ${AZ_BLOB_SRC_SAS_URL}"
 ```
 
 Note that this method has a maximum allowable file size of **5000 MB**. If you exceed this limit, you will get the following error message:
@@ -158,6 +188,8 @@ RequestId:[Request GUID]
 Time:[ISO-8601 timestamp]</Message>
 </Error>
 ```
+
+If you need to transfer files larger than **5000 MB**,
 
 ---
 
