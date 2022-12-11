@@ -78,21 +78,22 @@ To establish a connection between Azure Storage Explorer and Data Landing Zone, 
 The file transmission options detailed below generally default to the **block blob** blob type unless you specify a different option in your code.
 
 Data Landing Zone supports the following blob types:
+
 * **Block blobs** - optimized for uploading large amounts of data efficiently
   * This is the default option and generally what you should use with Data Landing Zone use cases
 * **Append blobs** - optimized for appending data to the end of a file (i.e. a log or ledger scenario)
 
 Note that **Page blobs** are not currently supported, due to restrictions with hierarchical namespace-enabled storage accounts ([more info](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-known-issues#blob-storage-apis)). Attempting to upload a page blob to Data Landing Zone will result in a similar error to the one below:
 
-```
-Specified feature is not yet supported for hierarchical namespace accounts. HTTP Status Code: 409 - HTTP Error Message: Specified feature is not yet supported for hierarchical namespace accounts. 
+```bash
+Specified feature is not yet supported for hierarchical namespace accounts. HTTP Status Code: 409 - HTTP Error Message: Specified feature is not yet supported for hierarchical namespace accounts.
 
 ...
 
 FeatureName: Page Blobs
 ```
-More information about blob types can be found [here](https://docs.microsoft.com/en-us/rest/api/storageservices/understanding-block-blobs--append-blobs--and-page-blobs).
 
+More information about blob types can be found [here](https://docs.microsoft.com/en-us/rest/api/storageservices/understanding-block-blobs--append-blobs--and-page-blobs).
 
 ---
 
@@ -101,8 +102,6 @@ More information about blob types can be found [here](https://docs.microsoft.com
 * [DLZ_Upload_Bash.sh](./src/DLZ_Upload_Bash.sh)
 
 This example uses Bash and [cURL](https://curl.se/) to upload a file to Data Landing Zone with the Azure Blob Storage REST API.
-
-https://github.com/jeffhlewis/AEP_DataLandingZone/blob/aabcf77c49a6a370f20b0b479fb9840c82f490fd/src/DLZ_Upload_Bash.sh
 
 ```Bash
 #!/bin/bash
@@ -169,12 +168,12 @@ AZ_BLOB_DEST_SAS_URL="https://<DEST ACCOUNT NAME>.blob.core.windows.net/<DEST CO
 
 # Execute HTTP PUT to upload file (remove '-v' flag to suppress verbose output)
 curl -v -X PUT ${AZ_BLOB_DEST_SAS_URL} \
-	-H "Content-Type: application/octet-stream" \
-	-H "Content-Length: 0" \
-	-H "x-ms-date: ${DATE_NOW}" \
-	-H "x-ms-version: ${AZ_VERSION}" \
-	-H "x-ms-blob-type: BlockBlob" \
-	-H "x-ms-copy-source: ${AZ_BLOB_SRC_SAS_URL}"
+   -H "Content-Type: application/octet-stream" \
+   -H "Content-Length: 0" \
+   -H "x-ms-date: ${DATE_NOW}" \
+   -H "x-ms-version: ${AZ_VERSION}" \
+   -H "x-ms-blob-type: BlockBlob" \
+   -H "x-ms-copy-source: ${AZ_BLOB_SRC_SAS_URL}"
 ```
 
 Note that this method has a maximum allowable file size of **5000 MB**. If you exceed this limit, you will get the following error message:
@@ -189,7 +188,7 @@ Time:[ISO-8601 timestamp]</Message>
 </Error>
 ```
 
-If you need to transfer files larger than **5000 MB**,
+If you need to transfer files larger than **5000 MB** you can utilize the PowerShell or Python libraries, which will do auto-chunking on large files for you automatically.
 
 ---
 
@@ -233,6 +232,54 @@ $srcFileName   = Split-path $srcFilePath -leaf
 # -----=====-----=====-----=====-----=====-----=====
 $clientContext = New-AzStorageContext -SasToken $sasToken -StorageAccountName $accountName
 $response      = Set-AzStorageBlobContent -File $srcFilePath -Container $containerName -Blob $srcFileName -Force -Context $clientContext
+```
+
+---
+
+## Copy a File to Data Landing Zone from an Existing Azure Storage Account Using PowerShell
+
+* [DLZ_Copy_PowerShell.ps1](./src/DLZ_Copy_PowerShell.ps1)
+
+Similar to the PowerShell file upload script above, but in this case you're copying a file from an existing Azure Blob Storage container to Data Landing Zone.
+
+```PowerShell
+<#
+.Synopsis
+   Copy a file from Azure Blob Storage to AEP Data Landing Zone
+.DESCRIPTION
+   Copies a single file from an Azure Blob Store to an Adobe Experience Platform
+   Data Landing Zone
+.Prerequisites
+   Ensure that the Az module is installed and that you're using PowerShell 7.1.3+
+   Command to install Az module:
+      Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
+.Author
+    Jeff Lewis (jeflewis@adobe.com)
+.CreatedOn
+    2022-12-10
+#>
+
+# -----=====-----=====-----=====-----=====-----=====
+# DLZ Container Settings
+# -----=====-----=====-----=====-----=====-----=====
+$destContainerName = "<DLZ CONTAINER NAME>"
+$destAccountName   = "<DLZ ACCOUNT NAME>"
+$destSasToken      = "<DLZ SAS TOKEN>"
+
+# -----=====-----=====-----=====-----=====-----=====
+# Source Blob Settings
+# -----=====-----=====-----=====-----=====-----=====
+$srcContainerName = "<SRC CONTAINER NAME>"
+$srcAccountName   = "<SRC ACCOUNT NAME>"
+$srcSasToken      = "<SRC SAS TOKEN>"
+$fileName         = "<NAME OF FILE TO TRANSFER, WITH EXTENSION>"
+
+# -----=====-----=====-----=====-----=====-----=====
+# Generate Storage Context and Upload File
+# -----=====-----=====-----=====-----=====-----=====
+$srcContext  = New-AzStorageContext -SasToken $srcSasToken  -StorageAccountName $srcAccountName
+$destContext = New-AzStorageContext -SasToken $destSasToken -StorageAccountName $destAccountName
+$response    = Copy-AzStorageBlob -SrcContainer $srcContainerName -SrcBlob $fileName -Context $srcContext -DestContainer $destContainerName -DestBlob $fileName -DestContext $destContext
 ```
 
 ---
