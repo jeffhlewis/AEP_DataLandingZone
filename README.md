@@ -41,6 +41,58 @@ These settings should be treated as sensitive and stored in a credentials vault 
 
 ---
 
+## Refreshing Your Data Landing Zone Credentials
+
+* [DLZ_Refresh_SAS.sh](./src/DLZ_Upload_Bash.sh)
+
+In addition to the UI-based "View Credentials" approach above, you can also programmatically retrieve or refresh your SAS credentials for Data Landing Zone via a POST call to the **/credentials** endpoint of the **AEP Connectors API**. The **type=user_drop_zone** and **action=refresh** parameters listed in the URL are required.
+
+```bash
+#!/bin/bash
+# -----=====-----=====-----=====-----=====-----=====-----=====
+# Refreshes SAS token for Data Landing Zone, invalidating
+# previous SAS tokens.
+#
+# The API response will contain new SAS credentials, and the
+# AEP UI will also update the "view credentials" modal window
+# with the updated credentials.
+#
+# Author:     Jeff Lewis (jeflewis@adobe.com)
+# Created On: 2023-01-07
+# -----=====-----=====-----=====-----=====-----=====-----=====
+
+# API Settings
+AEP_API_DLZ_SAS_REFRESH_URL="https://platform.adobe.io/data/foundation/connectors/landingzone/credentials?type=user_drop_zone&action=refresh"
+ACCESS_TOKEN="<BEARER TOKEN>"
+API_KEY="<AEP API CLIENT ID>"
+IMS_ORG="<IMS ORG>"
+SANDBOX_NAME="<NAME OF AEP SANDBOX>"
+
+# Execute HTTP POST to refresh SAS credentials for DLZ (remove '-v' flag to suppress verbose output)
+curl -v -X POST ${AEP_API_DLZ_SAS_REFRESH_URL} \
+	-H "Authorization: Bearer ${ACCESS_TOKEN}" \
+	-H "x-api-key: ${API_KEY}" \
+	-H "x-gw-ims-org-id: ${IMS_ORG}" \
+	-H "x-sandbox-name: ${SANDBOX_NAME}" \
+	-H "Content-Type: application/json"
+```
+
+After successfully making the POST call, the response will contain a new SAS token and URI:
+
+
+```json
+{
+   "containerName":"dlz-user-container",
+   "SASToken":"sv=2020-10-02&si=dlz...<SAS TOKEN>...%3D",
+   "storageAccountName":"sndbx********************",
+   "SASUri":"https://sndbx********************.blob.core.windows.net dlz-user-container?sv=2020-10-02&si=dlz...<SAS TOKEN>...%3D"
+}
+```
+
+**Making this API will invalidate all previous Data Landing Zone SAS credentials**. If there are concerns about using long-lived SAS credentials with a given workflow, this API call can be used to create a new SAS credential each time we wish to connect to Data Landing Zone.
+
+---
+
 ## Connecting Azure Storage Explorer to Data Landing Zone
 
 [Azure Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer/) is a free and easy UI-based way to manage the contents of your Data Landing Zone storage. After connecting the application to your Data Landing Zone storage container, you can upload new/updated files, delete old ones, create folders, etc.
