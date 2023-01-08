@@ -9,7 +9,7 @@ Data Landing Zone (DLZ) is an Azure Blob storage interface provisioned by Adobe 
 products and services license
 * Strict seven-day TTL is enforced - all files will be deleted automatically after seven days
 * Generally supports any tooling or protocols that support SAS-based authentication to an Azure Storage Container
-* Supports folders for organizing of files
+* Supports folders for organizing files
 * Names of files and folders are subject to Azure Storage naming constraints, as well as additional constraints unique to DLZ.
 * [See the official AEP Data Landing Zone documentation for further details](https://experienceleague.adobe.com/docs/experience-platform/sources/connectors/cloud-storage/data-landing-zone.html?lang=en)
 
@@ -89,7 +89,7 @@ After successfully making the POST call, the response will contain a new SAS tok
 }
 ```
 
-**Making this API will invalidate all previous Data Landing Zone SAS credentials**. If there are concerns about using long-lived SAS credentials with a given workflow, this API call can be used to create a new SAS credential each time we wish to connect to Data Landing Zone.
+**Making this API call will invalidate all previous Data Landing Zone SAS credentials**. If there are concerns about using long-lived SAS credentials with a given workflow, this API call can be used to create a new SAS credential each time we wish to connect to Data Landing Zone.
 
 ---
 
@@ -107,7 +107,7 @@ To establish a connection between Azure Storage Explorer and Data Landing Zone, 
 
    ![Azure Storage Explorer Method Screen](./img/dlz_ase_method.png)
 
-3. Copy and paste the **SAS URI** that was listed in your Data Landing Zone's credentials screen. The **Display name** value will auto-populate from the SAS URI, or you can name it to whatever you would like:
+3. Copy and paste the **SAS URI** that was listed in your Data Landing Zone's credentials screen. The **Display name** value will auto-populate from the SAS URI, or you can name it whatever you would like:
 
    ![Azure Storage Explorer Connection Info Screen](./img/dlz_connectioninfo.png)
 
@@ -127,13 +127,13 @@ To establish a connection between Azure Storage Explorer and Data Landing Zone, 
 
 ## Supported Blob Types
 
-The file transmission options detailed below generally default to the **block blob** blob type unless you specify a different option in your code.
+The file transmission options detailed below generally default to the **block blob** type unless you specify a different option in your code.
 
 Data Landing Zone supports the following blob types:
 
 * **Block blobs** - optimized for uploading large amounts of data efficiently
   * This is the default option and generally what you should use with Data Landing Zone use cases
-* **Append blobs** - optimized for appending data to the end of a file (i.e. a log or ledger scenario)
+* **Append blobs** - optimized for appending data to the end of a file (i.e., a log or ledger scenario)
 
 Note that **Page blobs** are not currently supported, due to restrictions with hierarchical namespace-enabled storage accounts ([more info](https://docs.microsoft.com/en-us/azure/storage/blobs/data-lake-storage-known-issues#blob-storage-apis)). Attempting to upload a page blob to Data Landing Zone will result in a similar error to the one below:
 
@@ -291,7 +291,7 @@ $response      = Set-AzStorageBlobContent -File $srcFilePath -Container $contain
 
 * [DLZ_Copy_PowerShell.ps1](./src/DLZ_Copy_PowerShell.ps1)
 
-Similar to the PowerShell file upload script above, but in this case you're copying a file from an existing Azure Blob Storage container to Data Landing Zone.
+Similar to the PowerShell file upload script above, but in this case, you're copying a file from an existing Azure Blob Storage container to Data Landing Zone.
 
 ```PowerShell
 <#
